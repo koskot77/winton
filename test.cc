@@ -88,11 +88,12 @@ int main(void){
     printf("Reading\n");
     double *buffer = 0;
     unsigned int maxRows = read_csv("impTrain.csv", 26, 205, buffer, false);
+    unsigned int maxColumns = 205-26;
     printf(" done reading %d lines\n",maxRows);
 
     // we will have to pass over all of the arguments by reference as we call R-complient function 
     double cutoffDistance = 0.7;
-    int dimensions[2] = {(int)maxRows,205-26};
+    int dimensions[2] = {(int)maxRows,(int)maxColumns};
     int clustering[maxRows];
     clusterCorrelations( dimensions, buffer, &cutoffDistance, clustering );
     // the output in the clustering argument compies with R numbering scheme, i.e. starts from 1
@@ -100,8 +101,10 @@ int main(void){
     printf("Saving clusters with more than 2 elements\n");
     map< int,list<int> > clusters;
 
-    for(size_t i=0; i<nRows; i++)
+    for(size_t i=0; i<maxRows; i++)
         clusters[ clustering[i] ].push_back(i+1); // let's be consistent in starting from 1
+
+    const double (*series)[maxColumns] = (const double (*)[maxColumns])buffer;
 
     for(auto &clust : clusters ){
         if( clust.second.size() > 1 ){
@@ -112,8 +115,9 @@ int main(void){
                 unsigned long row1 = ( clust.first > element ? (clust.first-1) : (element-1) );
                 unsigned long row2 = ( clust.first > element ? (element-1) : (clust.first-1) );
                 if( row1 == row2 ) continue;
-                file<<(element-1)<<","<< cor(source[row1],cachedMean[row1],cachedSd[row1],
-                                             source[row2],cachedMean[row2],cachedSd[row2], nColumns ) <<endl;
+
+                file<<(element-1)<<","<< cor(series[row1],cachedMean[row1],cachedSd[row1],
+                                             series[row2],cachedMean[row2],cachedSd[row2], nColumns ) <<endl;
             }
             file.close();
         }
