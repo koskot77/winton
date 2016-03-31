@@ -93,7 +93,7 @@ int main(void){
     // we will have to pass over all of the arguments by reference as we call R-complient function 
     double cutoffDistance = 0.7;
     int dimensions[2] = {(int)maxRows,205-26};
-    int clustering[nRows];
+    int clustering[maxRows];
     clusterCorrelations( dimensions, buffer, &cutoffDistance, clustering );
     // the output in the clustering argument compies with R numbering scheme, i.e. starts from 1
 
