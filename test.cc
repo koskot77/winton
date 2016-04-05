@@ -6,11 +6,12 @@
 #include <sstream>
 #include <map>
 
-// all of the packages below live in the cluscorr R package, but will be used in a standalone mode below
+// all of the files live in the cluscorr R package, but will be used in a standalone mode within this example
 extern size_t nCores;
 #include "utilities.cc"
 #include "quicksort.cc"
 #include "correlator.cc"
+#include "read_csv.cc"
 
 // Compile (make sure you have the cluscorr R package locally):
 //   g++ -Wl,--no-as-needed -g -Wall -std=c++11 -I./clustcorr/src/ -o test test.cc -lpthread
@@ -19,76 +20,20 @@ extern size_t nCores;
 //   impute them with inpute.R
 //   create local tmp directory
 //   execute ./test
-
-unsigned int read_csv(const char *csvFileName, unsigned int seriesBeginIndex, unsigned int seriesEndIndex, double* &buffer, bool header=true){
-
-    if( seriesEndIndex <= seriesBeginIndex ){
-        printf("  seriesBeginIndex:%d <= seriesEndIndex:%d\n",seriesBeginIndex,seriesEndIndex);
-        return 0;
-    }
-
-    size_t length = seriesEndIndex - seriesBeginIndex;
-
-    FILE *input = NULL;
-    if( (input = fopen(csvFileName,"rt")) == NULL ){ printf("  %s doesn't exist",csvFileName); return 0; }
-
-    char *buff = NULL;
-    size_t len = 0;
-
-    if( header && getline(&buff, &len, input)!=-1 ){
-        printf("  read header: %s\n",buff);
-        free(buff);
-        buff = NULL;
-    }
-
-    // find out how many more lines we need to read
-    long startPos = ftell(input);
-    unsigned long nLines = 0;
-    while( getline(&buff, &len, input) != -1 ) nLines++;
-    fseek(input, startPos, SEEK_SET);
-
-    for(unsigned int line = 0, nItems = 0; !feof(input) && getline(&buff, &len, input) != -1; line++){
-
-        if( nItems == 0 ){
-            nItems  = 1;
-            for(unsigned int pos=0; pos<strlen(buff); pos++) if( buff[pos] == ',' ) nItems++;
-            buffer = new double [nLines*length];
-            bzero( buffer, sizeof(double)*(nLines*length) ); 
-        }
-
-        double (*series)[length] = (double (*)[length]) buffer;
-
-        // parse the comma-separated list of arbitrary length
-        char *item = buff;
-        unsigned int index = nItems;
-        while( --index >= 0 ){
-            if( (item = strrchr(buff,',')) != NULL ) *item++ = '\0'; else item = buff;
-            if( strlen(item) ){
-                if( index >= seriesBeginIndex && index < seriesEndIndex ){
-                    series[line][index-seriesBeginIndex] = strtold(item, NULL);
-                }
-                if( item == buff ) break;
-            }
-        }
-
-    }
-
-    free(buff);
-    fclose(input);
-    return nLines;
-}
-
 using namespace std;
 
-int main(void){
+int main(int argc, char *argv[]){
+    if( argc != 3 ){ printf("Specify start and end positions as the two arguments\n"); return 0; }
 
     // set number of cores
     nCores = 4;
 
     printf("Reading\n");
     double *buffer = 0;
-    unsigned int maxRows = read_csv("impTrain.csv", 26, 205, buffer, false);
-    unsigned int maxColumns = 205-26;
+    unsigned int startPos = atoi(argv[1]), nextToEndPos = atoi(argv[2]); //26 205(145) 
+    unsigned int maxRows = read_csv("impTrain.csv", startPos, nextToEndPos, buffer, false);
+
+    unsigned int maxColumns = nextToEndPos-startPos;
     printf(" done reading %d lines\n",maxRows);
 
     // we will have to pass over all of the arguments by reference as we call R-complient function 

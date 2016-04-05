@@ -19,8 +19,8 @@ for(i in 1:dim(train)[[1]]){
         write.csv( cbind(feats$imputations[[1]][i,],e,train[i,dailyRets]), file=paste("impute/row",i,".csv",sep="") );
     if(i %% 100 == 0){ print(i);}
 }
+system("i=1; while [ $i -le 40000 ] ; do if [ -e "impute/row$i.csv" ] ; then  tail -1 impute/row$i.csv >> impTrain.csv ; fi; i=`expr $i + 1`; done; rm impute/*")
 
-#i=1; while [ $i -le 40000 ] ; do if [ -e "impute/row$i.csv" ] ; then  tail -1 impute/row$i.csv >> impTrain.csv ; fi; i=`expr $i + 1`; done; rm impute/* 
 
 test <- read.csv(file='test.csv',header=T,sep=',')
 returns <- c()
@@ -41,5 +41,4 @@ for(i in 1:dim(test)[[1]]){
         write.csv( cbind(feats$imputations[[1]][i,],e,test[i,dailyRets]), file=paste("impute/row",i,".csv",sep="") );
     if(i %% 100 == 0){ print(i);}
 }
-
-#i=1; while [ $i -le 40000 ] ; do if [ -e "impute/row$i.csv" ] ; then  tail -1 impute/row$i.csv >> impTest.csv ; fi; i=`expr $i + 1`; done; rm impute/* 
+system("i=1; while [ $i -le 60000 ] ; do if [ -e "impute/row$i.csv" ] ; then  tail -1 impute/row$i.csv >> impTest.csv ; fi; i=`expr $i + 1`; done; rm impute/*");
