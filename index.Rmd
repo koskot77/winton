@@ -1,0 +1,63 @@
+---
+title       : "Analysis of correlated series with `clustcorr` package"
+subtitle    : 
+author      : Khristian Kotov
+job         : 
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+github:
+  user: kkotov 
+  repo: talks
+url:
+  lib:    ../libraries
+  assets: ../assets
+widgets     : [mathjax]     # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## Introduction
+
+Here I describe a project that spinned-off from a recent
+[Winton's Machine Learning competition](https://www.kaggle.com/c/the-winton-stock-market-challenge/data).
+I am not concerned with outlining the solution or covering some other details of this rather difficult
+competition. My main goal is to describe the new R package, that solves a problem of finding correlated
+series on a massive scale. There are some other packages on the market such as `amap`, but I found
+that these could not cope with size of this problem.
+
+With my R package the resources sitting on my laps were just about sufficient for the exercise,
+which is $\mathcal{8}$GB RAM of my $\mathcal{4}$-cores laptop processing $\mathcal{40}\mathrm{K}$ events.
+Unfortunately, the quadratic running time and, more importantly for R, quadratic memory footprint
+pose a conceptual limitaion of the scalability meaning that twice bigger input would render
+useless any machine in my reach.
+
+Nonetheless, this R package can be useful for any data analysis that requires finding and grouping 
+together events comprising correlated series of measurements (e.g. time series) for a dataset of
+up to $\mathcal{O(50\mathrm{K})}$ events.
+
+--- .class #id
+
+## Formulation of the problem
+
+[](http://robjhyndman.com/papers/characteristic-based-clustering-for-time-series-data/)
+
+--- .class #id
+
+## Practical tips
+
+
+--- .class #id
+
+
+
+## Useful links
+
+https://www.otexts.org/fpp
+
+http://robjhyndman.com/uwafiles/
+
+Solution is outlined in 
+https://www.kaggle.com/c/the-winton-stock-market-challenge/forums/t/18645/congratulations-thoughts-on-the-problem/106378
+
+
