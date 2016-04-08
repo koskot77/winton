@@ -1,5 +1,5 @@
 ---
-title       : "Analysis of correlated series with `clustcorr` package"
+title       : "Analysis of correlated series with R clustcorr package"
 subtitle    : 
 author      : Khristian Kotov
 job         : 
@@ -47,43 +47,64 @@ Formulation of the problem:
 Solution:
 
 * find all pair correlations and store them in $\mathcal{O}(N^2)$-sized array
-* sort the array and iterate over the top correlated elements greater than a predefined threshold
+* sort the array and iterate over the top correlated elements above a predefined threshold
 * group pairs of original series corresponding to the array elements selected above 
 
---- .class #id
+Implementation in R:
 
-## Practical example
+* Installable from github given you have `devtools`, compiler, and `c++11` standard library:
 
 ```{r, comment = NA, message = F, echo = T}
-# installation
 require(devtools)
-install_github("clustcorr","koskot77")
-
-# clustering random series
-require(clustcorr)
-sample <- matrix( rnorm(10000), ncol=100 )
-setcores(4)
-cl <- cluster.correlations(sample,0.5)
-length( unique(cl) )
-cl <- recluster.correlations(sample,0.3)
-length( unique(cl) )
-
-# clustering non-random series
-...
+install_github("koskot77/clustcorr")
 ```
 
 --- .class #id
 
+## Example with random series
 
+```{r, comment = NA, message = F, echo = T}
+require(clustcorr)
+sample <- matrix( rnorm(1000000), ncol=100 )
+cl <- cluster.correlations(sample,0.5)
+length(cl)
+cl <- recluster.correlations(sample,0.3)
+length(cl)
+```
 
-## Useful links
+I.e. correlation threshold of $\mathcal{0.3}$ is low enough to merge everything in one cluster
 
-https://www.otexts.org/fpp
+--- .class #id
 
-http://robjhyndman.com/uwafiles/
+## Example with competition's data
 
-[Time series characteristics](http://robjhyndman.com/papers/characteristic-based-clustering-for-time-series-data/)
+Missing values are imputed with [impute.R](https://github.com/koskot77/winton/blob/master/impute.R) and clustering is done at $\mathcal{0.9}$ threshold:
 
-https://www.kaggle.com/c/the-winton-stock-market-challenge/forums/t/18645/congratulations-thoughts-on-the-problem/106378
+```{r, fig.height=5., fig.width=5., fig.align = 'center', comment = NA, message = F, echo = T}
+source("loadData.R")
+cl <- cluster.correlations(train_rets[1:10000,],0.9)
+plot ( t( train_rets[ cl[[1]][1], ] ), type="l" )
+lines( t( train_rets[ cl[[1]][2], ] ), col="red" )
+```
 
+--- .class #id
 
+## Summary
+
+The new `clustcorr` R package is now available for solving problem of finding similar series of observations
+in relatively large datasets. Although, with a bit of extra effort I could make it scalable for even larger
+problem sizes, the intrinsically quadratic running time makes such scalability pretty useless.
+
+Good links:
+
+* https://www.otexts.org/fpp - canonical text book on time series by Rob Hyndman 
+
+* http://robjhyndman.com/uwafiles - the same but in for of slides
+
+* [A similar overview of time series analysis](http://a-little-book-of-r-for-time-series.readthedocs.org/en/latest/src/timeseries.html)
+
+* [Time series characteristics](http://robjhyndman.com/papers/characteristic-based-clustering-for-time-series-data/)
+
+* [Few words on solution to the original competition] (https://www.kaggle.com/c/the-winton-stock-market-challenge/forums/t/18645/congratulations-thoughts-on-the-problem/106378)
+
+* ["Wavelet Methods in Statistics with R" documenting Wavethresh R package](http://www.amazon.com/Wavelet-Methods-Statistics-Use-Nason/dp/0387759603)
