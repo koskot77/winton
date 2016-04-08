@@ -28,12 +28,5 @@ test_feats  <- test[,2:26]
 # So we proceed to the fast c++ implementation interfaced to R with the proprietary clustcorr package
 #require(clustcorr)
 #setcores(4)
-
-#cl <- cross.correlations(train_rets[1:10000,1:119],test_rets[1:10000,1:119])
-
-#cl <- cluster.correlations(rets,0.5)
-
-#df <- data.frame(ind=seq(1,length(cl)),cl)
-#groupByCluster <- aggregate( df, by=list(label=cl), function(x){x} )
-#hist( unlist(lapply(groupByCluster[,2],length)) )
-
+#cl1 <- cross.correlations(train_rets[1:10000,1:119],test_rets[1:10000,1:119])
+#cl2 <- cluster.correlations(rets,0.5)
