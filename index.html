@@ -85,35 +85,42 @@ up to \(\mathcal{O(50\mathrm{K})}\) events.</p>
 <li>group pairs of original series corresponding to the array elements selected above </li>
 </ul>
 
+<p>Implementation in R:</p>
+
+<ul>
+<li>Installable from github given you have <code>devtools</code>, compiler, and <code>c++11</code> standard library:</li>
+</ul>
+
+<pre><code class="r">require(devtools)
+install_github(&quot;koskot77/clustcorr&quot;)
+</code></pre>
+
   </article>
   <!-- Presenter Notes -->
 </slide>
 
 <slide class="class" id="id" style="background:;">
   <hgroup>
-    <h2>Practical example</h2>
+    <h2>Example with random series</h2>
   </hgroup>
   <article data-timings="">
-    <pre><code class="r"># installation
-require(devtools)
-install_github(&quot;koskot77/clustcorr&quot;)
-
-# clustering random series
-require(clustcorr)
-sample &lt;- matrix( rnorm(10000), ncol=100 )
+    <pre><code class="r">require(clustcorr)
+sample &lt;- matrix( rnorm(1000000), ncol=100 )
 cl &lt;- cluster.correlations(sample,0.5)
-length( unique(cl) )
+length(cl)
 </code></pre>
 
-<pre><code>[1] 100
+<pre><code>[1] 9995
 </code></pre>
 
 <pre><code class="r">cl &lt;- recluster.correlations(sample,0.3)
-length( unique(cl) )
+length(cl)
 </code></pre>
 
-<pre><code>[1] 88
+<pre><code>[1] 1
 </code></pre>
+
+<p>I.e. correlation threshold of \(\mathcal{0.3}\) is low enough to merge everything in one cluster</p>
 
   </article>
   <!-- Presenter Notes -->
@@ -121,16 +128,42 @@ length( unique(cl) )
 
 <slide class="class" id="id" style="background:;">
   <hgroup>
-    <h2>Useful links</h2>
+    <h2>Example with competition&#39;s data</h2>
   </hgroup>
   <article data-timings="">
-    <p><a href="https://www.otexts.org/fpp">https://www.otexts.org/fpp</a></p>
+    <p>Missing values are imputed with <a href="https://github.com/koskot77/winton/blob/master/impute.R">impute.R</a> and clustering is done at \(\mathcal{0.9}\) threshold:</p>
 
-<p><a href="http://robjhyndman.com/uwafiles/">http://robjhyndman.com/uwafiles/</a></p>
+<pre><code class="r">source(&quot;loadData.R&quot;)
+cl &lt;- cluster.correlations(train_rets[1:10000,],0.9)
+plot ( t( train_rets[ cl[[1]][1], ] ), type=&quot;l&quot; )
+lines( t( train_rets[ cl[[1]][2], ] ), col=&quot;red&quot; )
+</code></pre>
 
-<p><a href="http://robjhyndman.com/papers/characteristic-based-clustering-for-time-series-data/">Time series characteristics</a></p>
+<p><img src="assets/fig/unnamed-chunk-3-1.png" title="plot of chunk unnamed-chunk-3" alt="plot of chunk unnamed-chunk-3" style="display: block; margin: auto;" /></p>
 
-<p><a href="https://www.kaggle.com/c/the-winton-stock-market-challenge/forums/t/18645/congratulations-thoughts-on-the-problem/106378">https://www.kaggle.com/c/the-winton-stock-market-challenge/forums/t/18645/congratulations-thoughts-on-the-problem/106378</a></p>
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Summary</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The new <code>clustcorr</code> R package is now available for solving problem of finding similar series of observations
+in relatively large datasets. Although, with a bit of extra effort I could make it scalable for even larger
+problem sizes, the intrinsically quadratic running time makes such scalability pretty useless.</p>
+
+<p>Good links:</p>
+
+<ul>
+<li><p><a href="https://www.otexts.org/fpp">https://www.otexts.org/fpp</a> - canonical text book on time series by Rob Hyndman </p></li>
+<li><p><a href="http://robjhyndman.com/uwafiles">http://robjhyndman.com/uwafiles</a> - the same but in for of slides</p></li>
+<li><p><a href="http://a-little-book-of-r-for-time-series.readthedocs.org/en/latest/src/timeseries.html">A similar overview of time series analysis</a></p></li>
+<li><p><a href="http://robjhyndman.com/papers/characteristic-based-clustering-for-time-series-data/">Time series characteristics</a></p></li>
+<li><p><a href="https://www.kaggle.com/c/the-winton-stock-market-challenge/forums/t/18645/congratulations-thoughts-on-the-problem/106378">Few words on solution to the original competition</a></p></li>
+<li><p><a href="http://www.amazon.com/Wavelet-Methods-Statistics-Use-Nason/dp/0387759603">&quot;Wavelet Methods in Statistics with R&quot; documenting Wavethresh R package</a></p></li>
+</ul>
 
   </article>
   <!-- Presenter Notes -->
@@ -154,14 +187,20 @@ length( unique(cl) )
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=3 title='Practical example'>
+        data-slide=3 title='Example with random series'>
          3
       </a>
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=4 title='Useful links'>
+        data-slide=4 title='Example with competition&#39;s data'>
          4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title='Summary'>
+         5
       </a>
     </li>
   </ul>
