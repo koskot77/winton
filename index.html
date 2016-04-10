@@ -135,7 +135,7 @@ length(cl)
 
 <pre><code class="r">source(&quot;loadData.R&quot;)
 cl &lt;- cluster.correlations(train_rets[1:10000,],0.9)
-plot ( t( train_rets[ cl[[1]][1], ] ), type=&quot;l&quot; )
+plot ( t( train_rets[ cl[[1]][1], ] ), type=&quot;l&quot;, xlab=&quot;time&quot;, ylab=&quot;return&quot;)
 lines( t( train_rets[ cl[[1]][2], ] ), col=&quot;red&quot; )
 </code></pre>
 
@@ -158,7 +158,7 @@ problem sizes, the intrinsically quadratic running time makes such scalability p
 
 <ul>
 <li><p><a href="https://www.otexts.org/fpp">https://www.otexts.org/fpp</a> - canonical text book on time series by Rob Hyndman </p></li>
-<li><p><a href="http://robjhyndman.com/uwafiles">http://robjhyndman.com/uwafiles</a> - the same but in for of slides</p></li>
+<li><p><a href="http://robjhyndman.com/uwafiles">http://robjhyndman.com/uwafiles</a> - the same but in form of slides</p></li>
 <li><p><a href="http://a-little-book-of-r-for-time-series.readthedocs.org/en/latest/src/timeseries.html">A similar overview of time series analysis</a></p></li>
 <li><p><a href="http://robjhyndman.com/papers/characteristic-based-clustering-for-time-series-data/">Time series characteristics</a></p></li>
 <li><p><a href="https://www.kaggle.com/c/the-winton-stock-market-challenge/forums/t/18645/congratulations-thoughts-on-the-problem/106378">Few words on solution to the original competition</a></p></li>
